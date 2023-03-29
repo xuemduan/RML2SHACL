@@ -1,0 +1,59 @@
+@prefix bibo: <http://purl.org/ontology/bibo/> .
+@prefix cito: <http://purl.org/spar/cito/> .
+@prefix dbo: <http://dbpedia.org/ontology/> .
+@prefix fabio: <http://purl.org/spar/fabio/> .
+@prefix foaf: <http://xmlns.com/foaf/spec/> .
+@prefix gn: <http://www.geonames.org/ontology#> .
+@prefix org: <http://www.w3.org/ns/org#> .
+@prefix pro: <http://purl.org/spar/pro/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+<http://mapping.example.com/map_Affiliation_0/shape> a sh:NodeShape ;
+    sh:nodeKind sh:IRI ;
+    sh:pattern "http://idlab.github.io/covid19#.*" ;
+    sh:property [ sh:nodeKind sh:IRI ;
+            sh:path dbo:city ],
+        [ sh:nodeKind sh:IRI ;
+            sh:path dbo:country ],
+        [ sh:nodeKind sh:Literal ;
+            sh:path gn:postalCode ],
+        [ sh:nodeKind sh:Literal ;
+            sh:path org:hasUnit ] ;
+    sh:targetClass org:Organization .
+
+<http://mapping.example.com/map_Authors_0/shape> a sh:NodeShape ;
+    sh:nodeKind sh:IRI ;
+    sh:pattern "http://idlab.github.io/covid19#.*..*" ;
+    sh:property [ sh:nodeKind sh:Literal ;
+            sh:path foaf:firstName ],
+        [ sh:nodeKind sh:Literal ;
+            sh:path foaf:surname ],
+        [ sh:node <http://mapping.example.com/map_Affiliation_0/shape> ;
+            sh:nodeKind sh:IRI ;
+            sh:path org:memberOf ] ;
+    sh:targetClass pro:author,
+        foaf:Person .
+
+<http://mapping.example.com/map_Citations_0/shape> a sh:NodeShape ;
+    sh:nodeKind sh:IRI ;
+    sh:pattern "http://dx.doi.org/.*" ;
+    sh:property [ sh:node <http://mapping.example.com/map_Realization_0/shape> ;
+            sh:nodeKind sh:IRI ;
+            sh:path cito:isCitedBy ] ;
+    sh:targetClass fabio:work .
+
+<http://mapping.example.com/map_Realization_0/shape> a sh:NodeShape ;
+    sh:nodeKind sh:IRI ;
+    sh:pattern "http://idlab.github.io/covid19#.*" ;
+    sh:property [ sh:node <http://mapping.example.com/map_Citations_0/shape> ;
+            sh:nodeKind sh:IRI ;
+            sh:path cito:cites ],
+        [ sh:node <http://mapping.example.com/map_Authors_0/shape> ;
+            sh:nodeKind sh:IRI ;
+            sh:path pro:PublishingRole ],
+        [ sh:nodeKind sh:Literal ;
+            sh:path bibo:abstract ],
+        [ sh:nodeKind sh:Literal ;
+            sh:path <http://purl.org/dc/terms/title> ] ;
+    sh:targetClass fabio:work .
+

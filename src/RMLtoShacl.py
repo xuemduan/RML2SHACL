@@ -9,7 +9,7 @@ import timeit
 from typing import Any, List
 
 import rdflib
-from rdflib import RDF
+from rdflib import RDF, URIRef
 from requests.exceptions import HTTPError
 
 from .RML import *
@@ -185,6 +185,7 @@ class RMLtoSHACL:
         pred_constant_objs = pm.po_dict.get(self.RML.CONSTANT)
         if pred_constant_objs and pred_constant_objs[0] == rdflib.RDF.type:
             om_constant_objs = om.po_dict.get(self.RML.CONSTANT)
+            om_constant_objs = [URIRef(i) for i in om_constant_objs]
             self.helpAddTriples(shacl_graph, node,
                                 self.shaclNS.targetClass, om_constant_objs)
             return
